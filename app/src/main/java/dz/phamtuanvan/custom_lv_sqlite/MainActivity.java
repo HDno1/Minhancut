@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -18,12 +19,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static EditText ed1,ed2,edId;
     DataBaseHelper dataBaseHelper;
     ListView ll;
+    FloatingActionButton floatingActionButton;
     ArrayList<Student> arrayList;
     Button btnThem,btnXoa,btnCapNhat;
     MyAdapter myAdapter;
@@ -34,13 +38,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnThem = (Button)findViewById(R.id.btn_insert);
-        btnXoa = (Button)findViewById(R.id.btn_delete);
-        btnCapNhat = (Button)findViewById(R.id.btn_update);
-
+        floatingActionButton = findViewById(R.id.floatingActionButton2);
 
         ed1 = (EditText)findViewById(R.id.txt_Name);
-        ed2 = (EditText) findViewById(R.id.txt_Phone);
 
         ll =  (ListView)findViewById(R.id.lv_student);
 
@@ -49,8 +49,14 @@ public class MainActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
 
         loadDataInListView();
-
-        btnThem.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+                startActivity(intent);
+            }
+        });
+        /*btnThem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = ed1.getText().toString();
@@ -66,43 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
 
-        btnXoa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*int id = Integer.parseInt(edId.getText().toString());*/
-                Boolean checkDeleteData = dataBaseHelper.deleteData(vitri);
-                if (checkDeleteData == true){
-                    Toast.makeText(MainActivity.this,"Delete Completed",Toast.LENGTH_SHORT).show();
 
-                    loadDataInListView();
-
-                }
-                else {
-                    Toast.makeText(MainActivity.this,"Delete Failed",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        btnCapNhat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int id = Integer.parseInt(edId.getText().toString());
-                String name = ed1.getText().toString();
-                String phone = ed2.getText().toString();
-                Boolean checkupdate = dataBaseHelper.updateData(id,name,phone);
-                if (checkupdate == true){
-                    Toast.makeText(MainActivity.this,"Update Completed",Toast.LENGTH_SHORT).show();
-
-                    loadDataInListView();
-
-                }
-                else {
-                    Toast.makeText(MainActivity.this,"Update Failed",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         registerForContextMenu(ll);
         ll.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -138,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadDataInListView() {
+    public void loadDataInListView() {
         arrayList = dataBaseHelper.getaAllData();
         myAdapter = new MyAdapter(this, arrayList);
         ll.setAdapter(myAdapter);
@@ -166,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                dialogInterface.cancel();
             }
         });
         builder.show();
